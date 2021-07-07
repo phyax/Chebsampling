@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -A UCLA0018
+#PBS -N sampling
+#PBS -j oe
+#PBS -m abe
+#PBS -M xinan@epss.ucla.edu
+#PBS -q regular
+#PBS -l walltime=00:20:00
+### Request N nodes, each with 32 MPI task
+#PBS -l select=2:ncpus=36:mpiprocs=32
+
+### Make data directory
+export DATADIR=$scpath/sampling/200
+rm -rf $DATADIR
+mkdir -p $DATADIR
+
+### Current work directory
+WKDIR="$(pwd)"
+
+### Copy input deck and change to data directory
+cd $DATADIR
+
+### Run the executable in data directory
+mpiexec_mpt dplace $HOME/sampling/src/chebsampling > output
+
+### Return to work directory
+cd $WKDIR
