@@ -17,7 +17,7 @@ The workflow of our sampling algorithm is wrapped in main.f90. For input, the nu
 
 A detailed description of all subroutines in the codes is available in 'manual.pdf'.
 
-## Compile and run
+## Compilation and execution
 For prerequisites, users are suggested to install Linux environment with GNU compilers, openmpi and make.
 
 A makefile is available to compile the code using either GNU or Intel compilers. To compile the code, type 'make' or 'make chebsampling'.
