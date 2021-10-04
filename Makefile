@@ -1,10 +1,18 @@
 MPIFC = mpif90
 
+# Intel compiler
 FC90 = ifort
 CC = icc
 
 OPTS90 = -O3 -r8
 CCOPTS = -O3 -std=c99
+
+# # GNU compiler
+# FC90 = gfortran
+# CC = gcc
+# 
+# OPTS90 = -O3 -fdefault-real-8 -fdefault-double-8
+# CCOPTS = -O3 -std=c99
 
 
 # linkage rules

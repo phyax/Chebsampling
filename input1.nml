@@ -1,0 +1,9 @@
+&grids
+ncx = 512
+ncy = 1024
+/
+
+&particles
+npx = 10000
+npy = 20000
+/

@@ -14,21 +14,25 @@ program main
   subroutine gen_samples()
     implicit none
 
+    ! icase = identiy of the example distribution data
+    integer, dimension(1) :: icase
+
     ! number of processors (nvp = 1 is handled.)
     integer :: nvp = 64
     integer :: idproc, kstrt
 
-    ! number of grids
-    integer, parameter :: ncx = 512, ncy = 1024
-    integer, parameter :: ncx1 = ncx + 1, ncy1 = ncy + 1
+    ! number of grids and auxillary variables
+    integer :: ncx, ncy, ncx1, ncy1
 
     ! npx, npy = number of particle in x and y direction
     ! idimp = number of particle coordinates
-    integer, parameter :: npx = 10000, npy = 20000, idimp = 2
+    integer :: npx, npy
+    integer, parameter :: idimp = 2
 
     ! fxy = pre-defined distribution data
     ! fgk = normalization factor
-    real, dimension(ncx1, ncy1) :: fxy
+    ! real, dimension(ncx1, ncy1) :: fxy
+    real, dimension(:, :), allocatable :: fxy
     real :: fgk
 
     ! density = particle density deposited on grids
@@ -62,9 +66,23 @@ program main
     integer, parameter :: idps = 2
     real, dimension(idps) :: edges
     integer :: nyp, noff, nypmx, nypmn
-    real, dimension(ncy1) :: fmargy
+    ! real, dimension(ncy1) :: fmargy
+    real, dimension(:), allocatable :: fmargy
     
     integer :: j, k
+
+    namelist /grids/ ncx, ncy
+    namelist /particles/ npx, npy
+
+    open(unit=1, file='input1.nml', status='old')
+    read(1, grids)
+    read(1, particles)
+    close(unit=1)
+
+    ! allocate model distribution array
+    ncx1 = ncx + 1
+    ncy1 = ncy + 1
+    allocate(fxy(ncx1, ncy1), fmargy(ncy1))
 
     call PPINIT2(idproc, nvp)
     kstrt = idproc + 1
@@ -82,14 +100,43 @@ program main
     npmax = np
     allocate(part(idimp, npmax))
 
-    ! initialize distribution function fxy and normalization factor fgk
-    ! call butterfly(fxy, ncx1, ncy1, fgk, np)
-    ! call lembege_pellat(fxy, ncx1, ncy1, fgk, np)
-    ! call halo(fxy, ncx1, ncy1, fgk, np)
-    call power_maxwellian(fxy, ncx1, ncy1, fgk, np)
-    ! call force_free(fxy, ncx1, ncy1, fgk, np)
-    ! call charged_LP_ics(fxy, ncx1, ncy1, fgk, np)
-    ! call charged_LP_ecs(fxy, ncx1, ncy1, fgk, np)
+    if (kstrt == 1) then
+      write(*, *) 'Input ID for the example distribution data:'
+      write(*, *) '0 = Butterfly distribution;'
+      write(*, *) '1 = Nonpolarized Lembege-Pellat current sheet;'
+      write(*, *) '2 = Polarized Lembege-Pellat current sheet for ions;'
+      write(*, *) '3 = Polarized Lembege-Pellat current sheet for electrons;'
+      write(*, *) '4 = Halo electrons in the solar wind;'
+      write(*, *) '5 = Electrons in the force-free current sheet;'
+      write(*, *) "6 = Electrons in the injection region in the Earth's magnetotail;"
+      read(*, *) icase(1)
+      write(*, *) 'Distribution ID ', icase(1), ' selected!'
+    endif
+    call PPBICAST(icase, 1)
+    if (icase(1) > 6) then
+      if (kstrt == 1) then
+        write(*, *) 'The desired distribution is not supported. Stop ...'
+      endif
+      stop
+    endif
+
+    ! get desired distribution data fxy and normalization factor fgk
+    select case(icase(1))
+      case(0)
+        call butterfly(fxy, ncx1, ncy1, fgk, np)
+      case(1)
+        call lembege_pellat(fxy, ncx1, ncy1, fgk, np)
+      case(2)
+        call charged_LP_ics(fxy, ncx1, ncy1, fgk, np)
+      case(3)
+        call charged_LP_ecs(fxy, ncx1, ncy1, fgk, np)
+      case(4)
+        call halo(fxy, ncx1, ncy1, fgk, np)
+      case(5)
+        call force_free(fxy, ncx1, ncy1, fgk, np)
+      case(6)
+        call power_maxwellian(fxy, ncx1, ncy1, fgk, np)
+    end select
 
     ! calculate partition variables: edges, nyp, noff, nypmx
     fmargy = (fxy(1, :) + fxy(ncx1, :)) * 0.5 + sum(fxy(2:ncx, :), 1)
