@@ -24,7 +24,7 @@ A makefile is available to compile the code using either GNU or Intel compilers.
 
 To run the code, type 'echo $i | mpiexec -np 16 chebsampling > timing$(printf "%03d" $i)'. Here 'i' is from 1 to 6 for the six types of target distributions built in the module distr (see main.f90 and distr.f90 for details).
 
-A docker container to run our code and plot the output data is available at https://codeocean.com/capsule/0988490/tree/v1, where the enviroment with all the required softwares has been readily set up.
+A docker container to run our code and plot the output data is available at https://codeocean.com/capsule/0988490/tree/v2, where the enviroment with all the required softwares has been readily set up.
 
 ## References
 This sampling algorithm and its applications in space plasmas are documented in 'inv_cheb_sampling.pdf', which is being prepared for publication. Useful references in developing our software are given in the manuscript. In particular, we benefit a lot from the textbook 'Approximation Theory and Approximation Practice' by Nick Trefethen.
