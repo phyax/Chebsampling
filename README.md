@@ -27,4 +27,4 @@ To run the code, type 'echo $i | mpiexec -np 16 chebsampling > timing$(printf "%
 A docker container to run our code and plot the output data is available at https://codeocean.com/capsule/0988490/tree/v2, where the enviroment with all the required softwares has been readily set up.
 
 ## References
-This sampling algorithm and its applications in space plasmas are documented in 'inv_cheb_sampling.pdf', which is being prepared for publication. Useful references in developing our software are given in the manuscript. In particular, we benefit a lot from the textbook 'Approximation Theory and Approximation Practice' by Nick Trefethen.
+This sampling algorithm and its applications in space plasmas are documented in 'inv_cheb_sampling.pdf', which has been published in Journal of Geophysical Research https://doi.org/10.1029/2021JA030031 (arxiv: https://doi.org/10.48550/arXiv.2202.08203). Useful references in developing our software are given in the manuscript. In particular, we benefit a lot from the textbook 'Approximation Theory and Approximation Practice' by Nick Trefethen.
